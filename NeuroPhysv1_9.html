@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Graduate Neurophysiology Interactive Lab (Light Theme)</title>
+  <style>
+    :root{
+      /* Light, professional palette */
+      --bg:#f6f8fb;
+      --panel:#ffffff;
+      --panel2:#f1f5fb;
+      --text:#0f172a;      /* slate-900 */
+      --muted:#475569;     /* slate-600 */
+      --border:rgba(15,23,42,.12);
+      --accent:#2563eb;    /* blue-600 */
+      --accent2:#f59e0b;   /* amber-500 */
+      --good:#059669;      /* emerald-600 */
+      --warn:#b45309;
+      --bad:#dc2626;       /* red-600 */
+      --shadow: 0 10px 26px rgba(15,23,42,.10);
+      --radius: 16px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1200px 700px at 15% 0%, #eaf1ff 0%, rgba(234,241,255,0) 55%),
+        radial-gradient(900px 600px at 85% 10%, #fff3e2 0%, rgba(255,243,226,0) 55%),
+        var(--bg);
+      color: var(--text);
+      line-height:1.45;
+    }
+    a{ color: var(--accent); }
+
+    header{
+      padding: 26px 18px 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1{
+      margin: 0 0 8px;
+      font-size: clamp(20px, 2.2vw, 30px);
+      letter-spacing:.2px;
+    }
+    .sub{
+      color: var(--muted);
+      margin: 0 0 10px;
+      max-width: 85ch;
+    }
+
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 18px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pill{
+      font-size: 12px;
+      color: #fff;
+      background: var(--accent);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    .pill.alt{ background: var(--accent2); color: #111827; }
+    .muted{ color: var(--muted); }
+
+    .stack{ display:grid; gap: 14px; }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 560px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+    .field{
+      flex: 1 1 160px;
+      min-width: 160px;
+    }
+    label{
+      display:block;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 0 6px;
+    }
+    input[type="number"], select{
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 10px;
+      color: var(--text);
+      outline: none;
+    }
+    input[type="range"]{ width: 100%; }
+
+    button{
+      background: linear-gradient(180deg, rgba(37,99,235,.12), rgba(37,99,235,.06));
+      color: var(--text);
+      border: 1px solid rgba(37,99,235,.22);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      transition: transform .05s ease, filter .2s ease;
+      font-weight: 750;
+    }
+    button:hover{ filter: brightness(1.02); }
+    button:active{ transform: translateY(1px); }
+    button.secondary{
+      background: rgba(15,23,42,.03);
+      border: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .kpi .box{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: var(--panel2);
+    }
+    .kpi .big{
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing:.3px;
+    }
+    .kpi .cap{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .note{
+      border-left: 3px solid rgba(37,99,235,.45);
+      padding: 8px 10px;
+      background: rgba(37,99,235,.06);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    canvas{
+      width: 100%;
+      height: 280px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display:block;
+    }
+    .smallcanvas{ height: 220px; } /* give y-axis room */
+
+    .tabs{
+      display:flex;
+      gap: 8px;
+      margin: 8px 0 10px;
+      flex-wrap: wrap;
+    }
+    .tab{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,.03);
+      color: var(--muted);
+      cursor:pointer;
+      user-select:none;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .tab.active{
+      background: rgba(37,99,235,.10);
+      border-color: rgba(37,99,235,.25);
+      color: var(--text);
+    }
+
+    .beakerWrap{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    .beaker{
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+    .beaker h3{
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 8px;
+    }
+    .badge{
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255,255,255,.7);
+    }
+
+    .meter{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel2);
+    }
+    .meter .val{
+      font-size: 20px;
+      font-weight: 950;
+    }
+    .meter .hint{
+      color: var(--muted);
+      font-size: 12px;
+      max-width: 52ch;
+    }
+
+    .quizQ{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: var(--panel2);
+      margin-top: 10px;
+    }
+    .quizQ .q{
+      font-weight: 900;
+      margin: 0 0 8px;
+    }
+    .choices{
+      display:grid;
+      gap: 8px;
+    }
+    .choiceBtn{
+      text-align:left;
+      width: 100%;
+      background: rgba(255,255,255,.75);
+      border: 1px solid var(--border);
+    }
+    .feedback{
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .feedback.good{ color: var(--good); }
+    .feedback.bad{ color: var(--bad); }
+
+    .footer{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 18px 30px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    code{
+      background: rgba(15,23,42,.05);
+      padding: 1px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Interactive Lab: Nernst, GHK, I–V Curves, and How Equilibrium Potentials “Develop”</h1>
+  <p class="sub">
+    Light-theme, more symmetrical layout. Parts are balanced across columns: <strong>Left</strong> = Part 1 + Part 3, <strong>Right</strong> = Part 2 + Instructor panel.
+    Part 2 axes now use “nice” ticks with adaptive spacing so y-axis labels remain readable across conductance changes.
+    Part 3 Scenario 2 logic is now explicitly: <em>K⁺ moves across, Cl⁻ is trapped</em>, voltage is computed from charge imbalance, and flux stops near <em>E<sub>K</sub></em>.
+  </p>
+</header>
+
+<div class="wrap">
+
+  <!-- LEFT COLUMN: Part 1 + Part 3 -->
+  <div class="stack">
+
+    <!-- Part 1 -->
+    <div class="card" id="sec-rmp">
+      <h2><span class="pill">Part 1</span> Resting membrane potential: Nernst + Goldman (GHK)</h2>
+
+      <div class="grid2">
+        <div class="card" style="padding:12px; box-shadow:none; background: var(--panel2); border:1px solid var(--border);">
+          <div class="row">
+            <div class="field">
+              <label>Temperature (°C)</label>
+              <input type="number" id="tempC" value="37" step="0.5" />
+            </div>
+            <div class="field">
+              <label>Log form</label>
+              <select id="logMode">
+                <option value="ln" selected>Natural log (ln)</option>
+                <option value="log10">Log base 10 (log10)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="note">
+            <strong>Prompt:</strong> “Predict: Which equilibrium potential will <em>Vm</em> be closest to, and why?”
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <button id="btnDefaults">Reset defaults</button>
+            <button class="secondary" id="btnRandom">Randomize (small)</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px; box-shadow:none; background: var(--panel2); border:1px solid var(--border);">
+          <div class="kpi">
+            <div class="box">
+              <div class="big" id="vmOut">—</div>
+              <div class="cap">GHK Vm (mV)</div>
+            </div>
+            <div class="box">
+              <div class="big" id="driveOut">—</div>
+              <div class="cap">Dominant “driver” (rough)</div>
+            </div>
+            <div class="box">
+              <div class="big" id="ekOut">—</div>
+              <div class="cap">E<sub>K</sub> (mV)</div>
+            </div>
+            <div class="box">
+              <div class="big" id="enaOut">—</div>
+              <div class="cap">E<sub>Na</sub> (mV)</div>
+            </div>
+            <div class="box">
+              <div class="big" id="eclOut">—</div>
+              <div class="cap">E<sub>Cl</sub> (mV)</div>
+            </div>
+            <div class="box">
+              <div class="big" id="metaOut">—</div>
+              <div class="cap">Key assumptions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px; padding:12px; box-shadow:none; background: var(--panel2); border:1px solid var(--border);">
+        <h3 style="margin:0 0 10px; font-size:14px; color:var(--muted);">Concentrations (mM) and relative permeabilities</h3>
+        <div class="grid2">
+          <div>
+            <div class="row">
+              <div class="field">
+                <label>[K<sup>+</sup>]<sub>out</sub></label>
+                <input type="number" id="Ko" value="5" step="0.1"/>
+              </div>
+              <div class="field">
+                <label>[K<sup>+</sup>]<sub>in</sub></label>
+                <input type="number" id="Ki" value="140" step="0.5"/>
+              </div>
+              <div class="field">
+                <label>P<sub>K</sub> (relative)</label>
+                <input type="number" id="Pk" value="1.0" step="0.01"/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>[Na<sup>+</sup>]<sub>out</sub></label>
+                <input type="number" id="Nao" value="145" step="0.5"/>
+              </div>
+              <div class="field">
+                <label>[Na<sup>+</sup>]<sub>in</sub></label>
+                <input type="number" id="Nai" value="12" step="0.5"/>
+              </div>
+              <div class="field">
+                <label>P<sub>Na</sub> (relative)</label>
+                <input type="number" id="Pna" value="0.04" step="0.01"/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>[Cl<sup>−</sup>]<sub>out</sub></label>
+                <input type="number" id="Clo" value="110" step="0.5"/>
+              </div>
+              <div class="field">
+                <label>[Cl<sup>−</sup>]<sub>in</sub></label>
+                <input type="number" id="Cli" value="4" step="0.2"/>
+              </div>
+              <div class="field">
+                <label>P<sub>Cl</sub> (relative)</label>
+                <input type="number" id="Pcl" value="0.45" step="0.01"/>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <canvas id="rmpCanvas" aria-label="Plot of equilibrium potentials and Vm"></canvas>
+            <div class="note" style="margin-top:10px;">
+              <strong>Note:</strong> In GHK, Cl<sup>−</sup> uses <em>[Cl]in</em> in the numerator and <em>[Cl]out</em> in the denominator (sign inversion).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 3 -->
+    <div class="card" id="sec-nernstanim">
+      <h2><span class="pill">Part 3</span> “Two-beaker” animation: how an equilibrium potential develops</h2>
+      <p class="muted" style="margin-top:0;">
+        Scenario 1: neutral solute equilibrates with Vm ≈ 0. Scenario 2: K<sup>+</sup> crosses selectively, Cl<sup>−</sup> is trapped; charge separation generates Vm that approaches E<sub>K</sub>, then net K<sup>+</sup> flux ~ 0.
+      </p>
+
+      <div class="tabs" role="tablist" aria-label="Scenario tabs">
+        <div class="tab active" id="tab-glucose" role="tab" tabindex="0">Scenario 1: Glucose (neutral)</div>
+        <div class="tab" id="tab-kcl" role="tab" tabindex="0">Scenario 2: KCl + K-selective channel</div>
+      </div>
+
+      <!-- Scenario 1 -->
+      <div id="scenarioGlucose">
+        <div class="row">
+          <div class="field">
+            <label>Left glucose (mM)</label>
+            <input type="number" id="gluL" value="100" step="1"/>
+          </div>
+          <div class="field">
+            <label>Right glucose (mM)</label>
+            <input type="number" id="gluR" value="10" step="1"/>
+          </div>
+          <div class="field">
+            <label>“Channel openness” (0–1)</label>
+            <input type="range" id="gluOpen" min="0" max="1" step="0.05" value="1"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;">Open = <span id="gluOpenOut">1.00</span></div>
+          </div>
+        </div>
+
+        <div class="beakerWrap">
+          <div class="beaker">
+            <h3>Left chamber <span class="badge" id="gluCountL">—</span></h3>
+            <canvas id="gluCanvasL" class="smallcanvas"></canvas>
+          </div>
+          <div class="beaker">
+            <h3>Right chamber <span class="badge" id="gluCountR">—</span></h3>
+            <canvas id="gluCanvasR" class="smallcanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="meter">
+          <div>
+            <div class="val" id="gluVm">0.0 mV</div>
+            <div class="muted" style="font-size:12px;">Voltmeter across membrane</div>
+          </div>
+          <div class="hint">
+            Neutral solute diffuses until concentrations equalize; with no charge separation, voltage remains ~0 mV.
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="gluStart">Start</button>
+          <button class="secondary" id="gluPause">Pause</button>
+          <button class="secondary" id="gluReset">Reset</button>
+        </div>
+      </div>
+
+      <!-- Scenario 2 -->
+      <div id="scenarioKCL" style="display:none;">
+        <div class="row">
+          <div class="field">
+            <label>Left KCl (mM)</label>
+            <input type="number" id="kclL" value="100" step="1"/>
+          </div>
+          <div class="field">
+            <label>Right KCl (mM)</label>
+            <input type="number" id="kclR" value="10" step="1"/>
+          </div>
+          <div class="field">
+            <label>Temperature (°C)</label>
+            <input type="number" id="kclTemp" value="37" step="0.5"/>
+          </div>
+          <div class="field">
+            <label>K channel openness (0–1)</label>
+            <input type="range" id="kOpen" min="0" max="1" step="0.05" value="1"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;">Open = <span id="kOpenOut">1.00</span></div>
+          </div>
+        </div>
+
+        <div class="beakerWrap">
+          <div class="beaker">
+            <h3>Left chamber <span class="badge" id="kclBadgeL">—</span></h3>
+            <canvas id="kclCanvasL" class="smallcanvas"></canvas>
+          </div>
+          <div class="beaker">
+            <h3>Right chamber <span class="badge" id="kclBadgeR">—</span></h3>
+            <canvas id="kclCanvasR" class="smallcanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="meter">
+          <div>
+            <div class="val" id="kclVm">—</div>
+            <div class="muted" style="font-size:12px;">Vm (Left relative to Right)</div>
+          </div>
+          <div class="hint" id="kclHint">
+            K<sup>+</sup> can cross; Cl<sup>−</sup> cannot. As K<sup>+</sup> diffuses, charge separation generates Vm that increasingly opposes further K<sup>+</sup> efflux.
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="kclStart">Start</button>
+          <button class="secondary" id="kclPause">Pause</button>
+          <button class="secondary" id="kclReset">Reset</button>
+        </div>
+
+        <div class="quizQ">
+          <div class="q">Check-in: Why does the simulation stop before concentrations equalize?</div>
+          <div class="choices">
+            <button class="choiceBtn" data-q="stop" data-a="a">Because K<sup>+</sup> runs out on the left</button>
+            <button class="choiceBtn" data-q="stop" data-a="b">Because Vm reaches E<sub>K</sub>, so electrical and chemical driving forces balance</button>
+            <button class="choiceBtn" data-q="stop" data-a="c">Because the channel closes automatically at 61 mV</button>
+          </div>
+          <div class="feedback" id="fbStop"></div>
+        </div>
+
+        <div class="quizQ">
+          <div class="q">What would happen if the membrane became permeable to both K<sup>+</sup> and Cl<sup>−</sup>?</div>
+          <div class="choices">
+            <button class="choiceBtn" data-q="both" data-a="a">Net diffusion would proceed toward equal concentrations with much smaller sustained Vm</button>
+            <button class="choiceBtn" data-q="both" data-a="b">Vm would increase beyond E<sub>K</sub> and flip sign repeatedly</button>
+            <button class="choiceBtn" data-q="both" data-a="c">Nothing changes; Cl<sup>−</sup> never affects Vm</button>
+          </div>
+          <div class="feedback" id="fbBoth"></div>
+        </div>
+
+        <div class="quizQ">
+          <div class="q">If left concentration doubles (100 → 200 mM) while right stays 10 mM, what happens to |E<sub>K</sub>|?</div>
+          <div class="choices">
+            <button class="choiceBtn" data-q="double" data-a="a">It stays the same; only valence matters</button>
+            <button class="choiceBtn" data-q="double" data-a="b">It increases in magnitude because E depends on the concentration ratio</button>
+            <button class="choiceBtn" data-q="double" data-a="c">It decreases because higher concentration reduces diffusion</button>
+          </div>
+          <div class="feedback" id="fbDouble"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: Part 2 + Instructor panel -->
+  <div class="stack">
+
+    <!-- Part 2 -->
+    <div class="card">
+      <h2><span class="pill">Part 2</span> I–V curve explorer</h2>
+
+      <div class="tabs" role="tablist" aria-label="I-V mode tabs">
+        <div class="tab active" id="tab-ohmic" role="tab" tabindex="0">Ohmic (leak-like)</div>
+        <div class="tab" id="tab-vg" role="tab" tabindex="0">Voltage-gated (Boltzmann)</div>
+      </div>
+
+      <div id="ivControlsOhmic">
+        <div class="row">
+          <div class="field">
+            <label>Conductance g (nS)</label>
+            <input type="range" id="gOhm" min="0" max="60" step="1" value="10"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="gOhmOut">10</span> nS</div>
+          </div>
+          <div class="field">
+            <label>Reversal potential E<sub>ion</sub> (mV)</label>
+            <input type="range" id="Eion" min="-120" max="60" step="1" value="-80"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="EionOut">-80</span> mV</div>
+          </div>
+        </div>
+        <canvas id="ivCanvasOhmic" class="smallcanvas" aria-label="Ohmic I-V curve"></canvas>
+        <div class="note">
+          <strong>Prompt:</strong> “At what voltage is current zero? How does changing g vs E shift the curve?”
+        </div>
+      </div>
+
+      <div id="ivControlsVG" style="display:none;">
+        <div class="row">
+          <div class="field">
+            <label>g<sub>max</sub> (nS)</label>
+            <input type="range" id="gMax" min="0" max="80" step="1" value="30"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="gMaxOut">30</span> nS</div>
+          </div>
+          <div class="field">
+            <label>E<sub>rev</sub> (mV)</label>
+            <input type="range" id="Erev" min="-120" max="60" step="1" value="50"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="ErevOut">50</span> mV</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>V<sub>1/2</sub> (mV)</label>
+            <input type="range" id="Vhalf" min="-100" max="40" step="1" value="-20"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="VhalfOut">-20</span> mV</div>
+          </div>
+          <div class="field">
+            <label>Slope factor k (mV)</label>
+            <input type="range" id="kSlope" min="1" max="25" step="1" value="6"/>
+            <div class="muted" style="font-size:12px; margin-top:4px;"><span id="kSlopeOut">6</span> mV</div>
+          </div>
+        </div>
+
+        <canvas id="gvCanvas" class="smallcanvas" aria-label="G-V curve"></canvas>
+        <canvas id="ivCanvasVG" class="smallcanvas" aria-label="Voltage-gated I-V curve"></canvas>
+
+        <div class="note">
+          <strong>Prompt:</strong> “Shift V<sub>1/2</sub> and k. Predict the G–V change, then check the resulting I–V.”
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructor panel -->
+    <div class="card">
+      <h2><span class="pill alt">Instructor panel</span> Suggested flow + quick checks</h2>
+      <div class="muted">
+        <p style="margin-top:0;">
+          <strong>Suggested sequence (35–60 min):</strong> (1) Predict E values → (2) compute Nernst + GHK →
+          (3) I–V “leak” → (4) voltage-gated I–V → (5) beaker animation + quiz.
+        </p>
+
+        <div class="note">
+          <strong>Editing:</strong> Search for <code>DEFAULTS</code> in JS to change baseline values. Search for <code>KCL_MODEL</code> to tune Scenario 2 stopping tolerance or voltage scaling.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  Tip: To embed in Canvas, host this file (e.g., GitHub Pages) and embed with an iframe, or upload if your LMS allows HTML.
+</div>
+
+<script>
+/* =========================================================
+   Utilities + constants
+   ========================================================= */
+const R = 8.314;     // J/(mol*K)
+const F = 96485;     // C/mol
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const fmt = (x, d=1) => (Number.isFinite(x) ? x.toFixed(d) : "—");
+
+const el = (id) => document.getElementById(id);
+
+function resizeCanvasToCSS(canvas){
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = Math.max(1, Math.floor(rect.width * dpr));
+  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return ctx;
+}
+
+/* =========================================================
+   Part 1: Nernst + GHK
+   ========================================================= */
+const DEFAULTS = {
+  tempC: 37,
+  Ko: 5, Ki: 140, Pk: 1.0,
+  Nao: 145, Nai: 12, Pna: 0.04,
+  Clo: 110, Cli: 4, Pcl: 0.45,
+};
+
+function tempK(){
+  return Number(el("tempC").value) + 273.15;
+}
+
+function nernst_mV(Cout, Cin, z){
+  const T = tempK();
+  const mode = el("logMode").value;
+  if (Cout <= 0 || Cin <= 0) return NaN;
+
+  if (mode === "log10"){
+    return (2.303*R*T/(z*F)) * 1000 * Math.log10(Cout/Cin);
+  }
+  return (R*T/(z*F)) * 1000 * Math.log(Cout/Cin);
+}
+
+function ghk_mV(){
+  const T = tempK();
+  const Ko = Number(el("Ko").value), Ki = Number(el("Ki").value), Pk = Number(el("Pk").value);
+  const Nao = Number(el("Nao").value), Nai = Number(el("Nai").value), Pna = Number(el("Pna").value);
+  const Clo = Number(el("Clo").value), Cli = Number(el("Cli").value), Pcl = Number(el("Pcl").value);
+
+  // Cl- inverted
+  const num = (Pk*Ko) + (Pna*Nao) + (Pcl*Cli);
+  const den = (Pk*Ki) + (Pna*Nai) + (Pcl*Clo);
+
+  if (num <= 0 || den <= 0) return NaN;
+  return (R*T/F) * 1000 * Math.log(num/den);
+}
+
+function dominantDriver(Vm, Ek, Ena, Ecl){
+  const dK = Math.abs(Vm - Ek);
+  const dNa = Math.abs(Vm - Ena);
+  const dCl = Math.abs(Vm - Ecl);
+  const min = Math.min(dK, dNa, dCl);
+  if (!Number.isFinite(min)) return "—";
+  if (min === dK) return "K+ (Vm closest to EK)";
+  if (min === dNa) return "Na+ (Vm closest to ENa)";
+  return "Cl− (Vm closest to ECl)";
+}
+
+const rmpCanvas = el("rmpCanvas");
+
+function drawRMPBars({Vm, Ek, Ena, Ecl}){
+  const ctx = resizeCanvasToCSS(rmpCanvas);
+  const w = rmpCanvas.getBoundingClientRect().width;
+  const h = rmpCanvas.getBoundingClientRect().height;
+
+  ctx.clearRect(0,0,w,h);
+
+  const minV = -120, maxV = 80;
+  const yFor = (mV) => {
+    const t = (mV - maxV) / (minV - maxV);
+    return 24 + t*(h-48);
+  };
+
+  // grid
+  ctx.strokeStyle = "rgba(15,23,42,.10)";
+  ctx.lineWidth = 1;
+  for (let v = -120; v <= 80; v += 20){
+    const y = yFor(v);
+    ctx.beginPath();
+    ctx.moveTo(10,y);
+    ctx.lineTo(w-10,y);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(15,23,42,.55)";
+    ctx.font = "12px ui-sans-serif";
+    ctx.fillText(`${v} mV`, 12, y-4);
+  }
+
+  const items = [
+    {name:"EK", val:Ek,  color:"rgba(245,158,11,.85)"},
+    {name:"ECl", val:Ecl, color:"rgba(5,150,105,.75)"},
+    {name:"ENa", val:Ena, color:"rgba(245,158,11,.55)"},
+    {name:"Vm (GHK)", val:Vm, color:"rgba(37,99,235,.90)"},
+  ];
+
+  const x0 = 95;
+  const barW = Math.max(44, (w - x0 - 30) / items.length - 14);
+
+  items.forEach((it, i) => {
+    const x = x0 + i*(barW + 14);
+    const y = yFor(it.val);
+
+    ctx.strokeStyle = it.color;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x+barW, y);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(15,23,42,.92)";
+    ctx.font = "800 12px ui-sans-serif";
+    ctx.fillText(it.name, x, 18);
+
+    ctx.fillStyle = "rgba(15,23,42,.70)";
+    ctx.font = "12px ui-sans-serif";
+    ctx.fillText(`${fmt(it.val,1)} mV`, x, 36);
+  });
+}
+
+function updateRMP(){
+  const Ko = Number(el("Ko").value), Ki = Number(el("Ki").value);
+  const Nao = Number(el("Nao").value), Nai = Number(el("Nai").value);
+  const Clo = Number(el("Clo").value), Cli = Number(el("Cli").value);
+
+  const Ek  = nernst_mV(Ko, Ki, +1);
+  const Ena = nernst_mV(Nao, Nai, +1);
+  const Ecl = nernst_mV(Clo, Cli, -1);
+  const Vm  = ghk_mV();
+
+  el("ekOut").textContent  = `${fmt(Ek,1)}`;
+  el("enaOut").textContent = `${fmt(Ena,1)}`;
+  el("eclOut").textContent = `${fmt(Ecl,1)}`;
+  el("vmOut").textContent  = `${fmt(Vm,1)}`;
+  el("driveOut").textContent = dominantDriver(Vm, Ek, Ena, Ecl);
+  el("metaOut").textContent = "steady-state; constant-field; ideal solutions; relative P";
+
+  drawRMPBars({Vm, Ek, Ena, Ecl});
+}
+
+function setDefaults(){
+  el("tempC").value = DEFAULTS.tempC;
+  el("Ko").value = DEFAULTS.Ko; el("Ki").value = DEFAULTS.Ki; el("Pk").value = DEFAULTS.Pk;
+  el("Nao").value = DEFAULTS.Nao; el("Nai").value = DEFAULTS.Nai; el("Pna").value = DEFAULTS.Pna;
+  el("Clo").value = DEFAULTS.Clo; el("Cli").value = DEFAULTS.Cli; el("Pcl").value = DEFAULTS.Pcl;
+  el("logMode").value = "ln";
+  updateRMP();
+}
+
+function randomizeSmall(){
+  const jitter = (v, pct) => Math.max(0.1, v*(1 + pct*(Math.random()*2-1)));
+  el("Ko").value = fmt(jitter(Number(el("Ko").value), 0.20), 2);
+  el("Ki").value = fmt(jitter(Number(el("Ki").value), 0.10), 2);
+  el("Nao").value = fmt(jitter(Number(el("Nao").value), 0.08), 2);
+  el("Nai").value = fmt(jitter(Number(el("Nai").value), 0.15), 2);
+  el("Clo").value = fmt(jitter(Number(el("Clo").value), 0.10), 2);
+  el("Cli").value = fmt(jitter(Number(el("Cli").value), 0.25), 2);
+
+  el("Pna").value = fmt(jitter(Number(el("Pna").value), 0.35), 3);
+  el("Pcl").value = fmt(jitter(Number(el("Pcl").value), 0.35), 3);
+  updateRMP();
+}
+
+/* =========================================================
+   Part 2: I–V curves (improved axes readability)
+   ========================================================= */
+
+/* Nice ticks (avoids cramped/ugly labels) */
+function niceNum(range, round){
+  const exp = Math.floor(Math.log10(range));
+  const frac = range / Math.pow(10, exp);
+  let niceFrac;
+  if (round){
+    if (frac < 1.5) niceFrac = 1;
+    else if (frac < 3) niceFrac = 2;
+    else if (frac < 7) niceFrac = 5;
+    else niceFrac = 10;
+  } else {
+    if (frac <= 1) niceFrac = 1;
+    else if (frac <= 2) niceFrac = 2;
+    else if (frac <= 5) niceFrac = 5;
+    else niceFrac = 10;
+  }
+  return niceFrac * Math.pow(10, exp);
+}
+
+function buildNiceTicks(min, max, maxTicks=7){
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min === max){
+    return {min, max, step: 1, ticks: [min]};
+  }
+  const range = niceNum(max - min, false);
+  const step = niceNum(range / (maxTicks - 1), true);
+  const niceMin = Math.floor(min / step) * step;
+  const niceMax = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = niceMin; v <= niceMax + 0.5*step; v += step){
+    ticks.push(v);
+  }
+  return {min: niceMin, max: niceMax, step, ticks};
+}
+
+function drawAxesNice(ctx, w, h, xMin, xMax, yMin, yMax, xLabel, yLabel){
+  // determine y ticks and left padding based on label width
+  const yt = buildNiceTicks(yMin, yMax, 7);
+  const xt = buildNiceTicks(xMin, xMax, 7);
+
+  const yFmt = (v) => {
+    const av = Math.abs(v);
+    if (av >= 1000) return v.toFixed(0);
+    if (av >= 100) return v.toFixed(0);
+    if (av >= 10) return v.toFixed(0);
+    return v.toFixed(1);
+  };
+
+  ctx.font = "12px ui-sans-serif";
+  let maxW = 0;
+  yt.ticks.forEach(v => { maxW = Math.max(maxW, ctx.measureText(yFmt(v)).width); });
+
+  const padL = Math.ceil(18 + maxW + 10);
+  const padR = 14, padT = 14, padB = 38;
+
+  const xFor = (x) => padL + (x - xMin)/(xMax-xMin) * (w - padL - padR);
+  const yFor = (y) => padT + (yMax - y)/(yMax-yMin) * (h - padT - padB);
+
+  // grid
+  ctx.strokeStyle = "rgba(15,23,42,.10)";
+  ctx.lineWidth = 1;
+
+  xt.ticks.forEach(xv => {
+    const x = xFor(xv);
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, h-padB); ctx.stroke();
+    ctx.fillStyle = "rgba(15,23,42,.55)";
+    ctx.fillText(`${Math.round(xv)}`, x-10, h-padB+22);
+  });
+
+  yt.ticks.forEach(yv => {
+    const y = yFor(yv);
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w-padR, y); ctx.stroke();
+    ctx.fillStyle = "rgba(15,23,42,.60)";
+    ctx.fillText(yFmt(yv), 10, y+4);
+  });
+
+  // axes lines at 0
+  ctx.strokeStyle = "rgba(15,23,42,.28)";
+  ctx.lineWidth = 2;
+  const x0 = xFor(0);
+  const y0 = yFor(0);
+  ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(w-padR, y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0, padT); ctx.lineTo(x0, h-padB); ctx.stroke();
+
+  // labels
+  ctx.fillStyle = "rgba(15,23,42,.70)";
+  ctx.font = "12px ui-sans-serif";
+  ctx.fillText(xLabel, w/2 - 48, h-10);
+
+  ctx.save();
+  ctx.translate(14, h/2 + 50);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText(yLabel, 0, 0);
+  ctx.restore();
+
+  return {xFor, yFor, padL, padR, padT, padB};
+}
+
+const tabOhm = el("tab-ohmic");
+const tabVG  = el("tab-vg");
+const ohmPanel = el("ivControlsOhmic");
+const vgPanel  = el("ivControlsVG");
+
+function setIVMode(mode){
+  const isOhm = mode === "ohm";
+  tabOhm.classList.toggle("active", isOhm);
+  tabVG.classList.toggle("active", !isOhm);
+  ohmPanel.style.display = isOhm ? "" : "none";
+  vgPanel.style.display  = isOhm ? "none" : "";
+  drawIV();
+}
+tabOhm.addEventListener("click", ()=>setIVMode("ohm"));
+tabVG.addEventListener("click", ()=>setIVMode("vg"));
+
+const ivCanvasOhm = el("ivCanvasOhmic");
+const gvCanvas = el("gvCanvas");
+const ivCanvasVG = el("ivCanvasVG");
+
+function drawOhmic(){
+  const ctx = resizeCanvasToCSS(ivCanvasOhm);
+  const w = ivCanvasOhm.getBoundingClientRect().width;
+  const h = ivCanvasOhm.getBoundingClientRect().height;
+  ctx.clearRect(0,0,w,h);
+
+  const g = Number(el("gOhm").value); // nS
+  const E = Number(el("Eion").value); // mV
+  el("gOhmOut").textContent = g;
+  el("EionOut").textContent = E;
+
+  const Vmin = -120, Vmax = 60;
+
+  let Imin = Infinity, Imax = -Infinity;
+  const pts = [];
+  for (let V = Vmin; V <= Vmax; V += 1){
+    const I = g*(V - E); // nS*mV ~ pA (scaled)
+    pts.push({V,I});
+    Imin = Math.min(Imin, I);
+    Imax = Math.max(Imax, I);
+  }
+
+  // keep y-range "nice" and readable even at high g
+  const pad = 0.10*(Imax-Imin || 1);
+  Imin -= pad; Imax += pad;
+
+  const ax = drawAxesNice(ctx, w, h, Vmin, Vmax, Imin, Imax, "Voltage (mV)", "Current (pA)");
+
+  ctx.strokeStyle = "rgba(37,99,235,.85)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const x = ax.xFor(p.V);
+    const y = ax.yFor(p.I);
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // reversal marker at V=E
+  ctx.fillStyle = "rgba(245,158,11,.90)";
+  ctx.font = "800 12px ui-sans-serif";
+  const xE = ax.xFor(E);
+  const y0 = ax.yFor(0);
+  ctx.beginPath(); ctx.arc(xE, y0, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "rgba(15,23,42,.75)";
+  ctx.fillText("I=0 at V=Erev", clamp(xE-40, 60, w-160), clamp(y0-10, 20, h-44));
+}
+
+function boltz(V, Vhalf, k){
+  return 1/(1 + Math.exp(-(V - Vhalf)/k));
+}
+
+function drawVG(){
+  // G-V
+  {
+    const ctx = resizeCanvasToCSS(gvCanvas);
+    const w = gvCanvas.getBoundingClientRect().width;
+    const h = gvCanvas.getBoundingClientRect().height;
+    ctx.clearRect(0,0,w,h);
+
+    const Vmin = -120, Vmax = 60;
+    const Vhalf = Number(el("Vhalf").value);
+    const k = Number(el("kSlope").value);
+
+    const pts = [];
+    for (let V = Vmin; V <= Vmax; V += 1){
+      pts.push({V, m: boltz(V, Vhalf, k)});
+    }
+
+    const ax = drawAxesNice(ctx, w, h, Vmin, Vmax, 0, 1, "Voltage (mV)", "m∞ (open prob)");
+    ctx.strokeStyle = "rgba(245,158,11,.85)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    pts.forEach((p,i)=>{
+      const x=ax.xFor(p.V), y=ax.yFor(p.m);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // marker
+    ctx.fillStyle = "rgba(37,99,235,.90)";
+    ctx.font = "800 12px ui-sans-serif";
+    const xh = ax.xFor(Vhalf);
+    const yh = ax.yFor(0.5);
+    ctx.beginPath(); ctx.arc(xh,yh,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(15,23,42,.75)";
+    ctx.fillText("V1/2 (m=0.5)", clamp(xh-35, 60, w-160), clamp(yh-10, 18, h-44));
+  }
+
+  // I-V
+  {
+    const ctx = resizeCanvasToCSS(ivCanvasVG);
+    const w = ivCanvasVG.getBoundingClientRect().width;
+    const h = ivCanvasVG.getBoundingClientRect().height;
+    ctx.clearRect(0,0,w,h);
+
+    const gmax = Number(el("gMax").value);
+    const Erev = Number(el("Erev").value);
+    const Vhalf = Number(el("Vhalf").value);
+    const k = Number(el("kSlope").value);
+
+    el("gMaxOut").textContent = gmax;
+    el("ErevOut").textContent = Erev;
+    el("VhalfOut").textContent = Vhalf;
+    el("kSlopeOut").textContent = k;
+
+    const Vmin = -120, Vmax = 60;
+    const pts = [];
+    let Imin = Infinity, Imax = -Infinity;
+
+    for (let V = Vmin; V <= Vmax; V += 1){
+      const m = boltz(V, Vhalf, k);
+      const g = gmax * m;          // simple activation
+      const I = g*(V - Erev);
+      pts.push({V,I});
+      Imin = Math.min(Imin, I);
+      Imax = Math.max(Imax, I);
+    }
+
+    const pad = 0.10*(Imax-Imin || 1);
+    Imin -= pad; Imax += pad;
+
+    const ax = drawAxesNice(ctx, w, h, Vmin, Vmax, Imin, Imax, "Voltage (mV)", "Current (pA)");
+
+    ctx.strokeStyle = "rgba(37,99,235,.85)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    pts.forEach((p,i)=>{
+      const x=ax.xFor(p.V), y=ax.yFor(p.I);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // reversal marker
+    ctx.fillStyle = "rgba(245,158,11,.90)";
+    ctx.font = "800 12px ui-sans-serif";
+    const xE = ax.xFor(Erev);
+    const y0 = ax.yFor(0);
+    ctx.beginPath(); ctx.arc(xE, y0, 5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(15,23,42,.75)";
+    ctx.fillText("I=0 at Erev", clamp(xE-28, 60, w-140), clamp(y0-10, 20, h-44));
+  }
+}
+
+function drawIV(){
+  if (tabOhm.classList.contains("active")) drawOhmic();
+  else drawVG();
+}
+
+/* =========================================================
+   Part 3: Two-beaker simulations
+   ========================================================= */
+
+const tabGlu = el("tab-glucose");
+const tabKcl = el("tab-kcl");
+const panelGlu = el("scenarioGlucose");
+const panelKcl = el("scenarioKCL");
+
+function setScenario(which){
+  const isGlu = which === "glu";
+  tabGlu.classList.toggle("active", isGlu);
+  tabKcl.classList.toggle("active", !isGlu);
+  panelGlu.style.display = isGlu ? "" : "none";
+  panelKcl.style.display = isGlu ? "none" : "";
+}
+tabGlu.addEventListener("click", ()=>setScenario("glu"));
+tabKcl.addEventListener("click", ()=>setScenario("kcl"));
+
+/* --- particle helpers (visual only) --- */
+function makeParticles(n, type){
+  const pts = [];
+  for (let i=0; i<n; i++){
+    pts.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random()*2-1)*0.002,
+      vy: (Math.random()*2-1)*0.002,
+      type
+    });
+  }
+  return pts;
+}
+function stepParticles(pts){
+  for (const p of pts){
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0){ p.x=0; p.vx*=-1; }
+    if (p.x > 1){ p.x=1; p.vx*=-1; }
+    if (p.y < 0){ p.y=0; p.vy*=-1; }
+    if (p.y > 1){ p.y=1; p.vy*=-1; }
+  }
+}
+function drawChamber(canvas, pts){
+  const ctx = resizeCanvasToCSS(canvas);
+  const w = canvas.getBoundingClientRect().width;
+  const h = canvas.getBoundingClientRect().height;
+  ctx.clearRect(0,0,w,h);
+
+  // subtle center line (membrane) for context
+  ctx.strokeStyle = "rgba(15,23,42,.08)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(w*0.5, 8);
+  ctx.lineTo(w*0.5, h-8);
+  ctx.stroke();
+
+  for (const p of pts){
+    let fill = "rgba(37,99,235,.70)"; // glucose
+    if (p.type === "K")   fill = "rgba(245,158,11,.75)";
+    if (p.type === "Cl")  fill = "rgba(5,150,105,.65)";
+    ctx.fillStyle = fill;
+    const x = 10 + p.x*(w-20);
+    const y = 10 + p.y*(h-20);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "rgba(15,23,42,.60)";
+  ctx.font = "12px ui-sans-serif";
+  const hasK = pts.some(p=>p.type==="K");
+  const hasCl = pts.some(p=>p.type==="Cl");
+  const label = hasK || hasCl ? "K+ (amber), Cl− (green)" : "Glucose (neutral)";
+  ctx.fillText(label, 12, h-10);
+}
+
+/* --- Scenario 1: glucose --- */
+let gluRunning = false;
+let gluTimer = null;
+let gluL = [], gluR = [];
+
+function gluInit(){
+  const LmM = Number(el("gluL").value);
+  const RmM = Number(el("gluR").value);
+  const scale = 0.6;
+  const nL = clamp(Math.round(LmM*scale), 6, 140);
+  const nR = clamp(Math.round(RmM*scale), 6, 140);
+  gluL = makeParticles(nL, "glu");
+  gluR = makeParticles(nR, "glu");
+  el("gluVm").textContent = "0.0 mV";
+  updateGluBadges();
+  drawChamber(el("gluCanvasL"), gluL);
+  drawChamber(el("gluCanvasR"), gluR);
+}
+function updateGluBadges(){
+  el("gluCountL").textContent = `~${gluL.length} particles`;
+  el("gluCountR").textContent = `~${gluR.length} particles`;
+}
+function gluStep(){
+  const open = Number(el("gluOpen").value);
+  el("gluOpenOut").textContent = open.toFixed(2);
+
+  stepParticles(gluL); stepParticles(gluR);
+
+  const diff = gluL.length - gluR.length;
+  const moveProb = clamp(Math.abs(diff) / 220, 0, 0.08) * open;
+
+  if (Math.random() < moveProb){
+    if (diff > 0 && gluL.length > 2){
+      const p = gluL.pop(); p.x=Math.random(); p.y=Math.random();
+      gluR.push(p);
+    } else if (diff < 0 && gluR.length > 2){
+      const p = gluR.pop(); p.x=Math.random(); p.y=Math.random();
+      gluL.push(p);
+    }
+  }
+
+  updateGluBadges();
+  drawChamber(el("gluCanvasL"), gluL);
+  drawChamber(el("gluCanvasR"), gluR);
+
+  if (Math.abs(gluL.length - gluR.length) <= 1){
+    gluPause();
+  }
+}
+function gluStart(){ if (gluRunning) return; gluRunning = true; gluTimer = setInterval(gluStep, 60); }
+function gluPause(){ gluRunning = false; if (gluTimer) clearInterval(gluTimer); gluTimer = null; }
+function gluReset(){ gluPause(); gluInit(); }
+
+/* --- Scenario 2: KCl + K selective --- */
+/*
+  KCL_MODEL:
+  - "Concentrations" are represented by particle counts (visual proxy).
+  - Cl- particles never cross (selectivity).
+  - Vm is computed from net charge difference (K - Cl) across compartments (conceptual capacitor).
+  - K+ movement probability is driven by electrochemical mismatch: (Vm - EK).
+    If Vm is less than EK (more negative relative to EK), K tends to move to bring Vm toward EK, and vice versa.
+*/
+let kclRunning = false;
+let kclTimer = null;
+
+let K_L = [], K_R = [], Cl_L = [], Cl_R = [];
+let Vm_kcl = 0; // mV (Left relative to Right)
+
+const KCL = {
+  concToParticlesScale: 0.45,
+  VmPerChargeUnit: 0.8,     // mV per unit charge-imbalance proxy (tunable)
+  fluxGain: 0.065,          // how strongly mismatch drives moves
+  tol_mV: 1.2,              // stop when |Vm - EK| < tol
+  maxStepMoves: 2           // allow up to N K-moves per tick (stabilizes approach)
+};
+
+function kEq_mV_fromCounts(){
+  // EK for "Left relative to Right" using particle counts as concentration proxies
+  const T = Number(el("kclTemp").value) + 273.15;
+  const KL = Math.max(1e-9, K_L.length);
+  const KR = Math.max(1e-9, K_R.length);
+  // EK = (RT/F) ln([K]_right/[K]_left) (because Vm = Vleft - Vright)
+  return (R*T/F)*1000 * Math.log(KR/KL);
+}
+
+function vmFromChargeImbalance(){
+  // Net charge proxy per side: (K - Cl)
+  const qL = (K_L.length - Cl_L.length);
+  const qR = (K_R.length - Cl_R.length);
+  // Vm proportional to difference in net charges
+  return KCL.VmPerChargeUnit * (qL - qR);
+}
+
+function kclInit(){
+  const LmM = Number(el("kclL").value);
+  const RmM = Number(el("kclR").value);
+
+  const scale = KCL.concToParticlesScale;
+  const nL = clamp(Math.round(LmM*scale), 10, 160);
+  const nR = clamp(Math.round(RmM*scale), 10, 160);
+
+  K_L  = makeParticles(nL, "K");
+  Cl_L = makeParticles(nL, "Cl");
+  K_R  = makeParticles(nR, "K");
+  Cl_R = makeParticles(nR, "Cl");
+
+  // Start electroneutral (Vm ~ 0)
+  Vm_kcl = vmFromChargeImbalance();
+
+  updateKclBadges();
+  drawKcl();
+  updateKclMeter(true);
+}
+
+function updateKclBadges(){
+  el("kclBadgeL").textContent = `K+: ${K_L.length} | Cl−: ${Cl_L.length}`;
+  el("kclBadgeR").textContent = `K+: ${K_R.length} | Cl−: ${Cl_R.length}`;
+}
+
+function drawKcl(){
+  drawChamber(el("kclCanvasL"), K_L.concat(Cl_L));
+  drawChamber(el("kclCanvasR"), K_R.concat(Cl_R));
+}
+
+function updateKclMeter(isInit=false){
+  const EK = kEq_mV_fromCounts();
+  Vm_kcl = vmFromChargeImbalance(); // recompute from charges each frame
+
+  el("kclVm").textContent = `${fmt(Vm_kcl,1)} mV (Eₖ ≈ ${fmt(EK,1)} mV)`;
+
+  if (!isInit && kclRunning && Math.abs(Vm_kcl - EK) <= KCL.tol_mV){
+    kclPause();
+    el("kclHint").innerHTML =
+      `Stopped near equilibrium: Vm ≈ E<sub>K</sub>. Net K<sup>+</sup> flux is ~0 because electrical and chemical forces balance.`;
+  } else {
+    el("kclHint").innerHTML =
+      `K<sup>+</sup> can cross; Cl<sup>−</sup> cannot. As K<sup>+</sup> diffuses, charge separation generates Vm that increasingly opposes further K<sup>+</sup> movement.`;
+  }
+}
+
+function kclAttemptMove(direction){
+  // direction: +1 means L->R, -1 means R->L
+  if (direction > 0){
+    if (K_L.length <= 2) return false;
+    const p = K_L.pop();
+    p.x = Math.random(); p.y = Math.random();
+    K_R.push(p);
+    return true;
+  } else {
+    if (K_R.length <= 2) return false;
+    const p = K_R.pop();
+    p.x = Math.random(); p.y = Math.random();
+    K_L.push(p);
+    return true;
+  }
+}
+
+function kclStep(){
+  const open = Number(el("kOpen").value);
+  el("kOpenOut").textContent = open.toFixed(2);
+
+  // random movement
+  stepParticles(K_L); stepParticles(Cl_L);
+  stepParticles(K_R); stepParticles(Cl_R);
+
+  const EK = kEq_mV_fromCounts();
+  Vm_kcl = vmFromChargeImbalance();
+
+  // electrochemical mismatch drives direction: want Vm -> EK
+  const mismatch = (EK - Vm_kcl); // positive means Vm below EK => push moves that increase Vm toward EK
+  const drive = clamp(mismatch / 60, -1, 1);
+
+  // chemical tendency (more K on L pushes L->R)
+  const chem = clamp((K_L.length - K_R.length) / 120, -1, 1);
+
+  // blended push for L->R positive
+  const push = 0.55*chem + 0.45*drive;
+
+  // probability of attempting each move
+  const base = KCL.fluxGain * open;
+  const prob = clamp(Math.abs(push) * base, 0, 0.12);
+
+  // allow 0..maxStepMoves per tick depending on prob
+  let moves = 0;
+  const dir = (push >= 0) ? +1 : -1;
+
+  for (let k=0; k<KCL.maxStepMoves; k++){
+    if (Math.random() < prob){
+      if (kclAttemptMove(dir)) moves++;
+    }
+  }
+
+  updateKclBadges();
+  drawKcl();
+  updateKclMeter(false);
+}
+
+function kclStart(){
+  if (kclRunning) return;
+  kclRunning = true;
+  el("kclHint").textContent = "Running… watch Vm approach Eₖ.";
+  kclTimer = setInterval(kclStep, 60);
+}
+function kclPause(){
+  kclRunning = false;
+  if (kclTimer) clearInterval(kclTimer);
+  kclTimer = null;
+}
+function kclReset(){
+  kclPause();
+  kclInit();
+}
+
+/* =========================================================
+   Quiz logic
+   ========================================================= */
+const ANSWERS = { stop: "b", both: "a", double: "b" };
+const FEEDBACK = {
+  stop: {
+    a: {ok:false, txt:"Not quite. Equilibrium doesn’t require K+ to ‘run out’; it’s about balanced forces."},
+    b: {ok:true,  txt:"Yes. At Vm ≈ EK, electrical and chemical driving forces cancel, so net K+ flux ~ 0."},
+    c: {ok:false, txt:"Channel closure isn’t required—flux can go to ~0 with the channel still open."},
+  },
+  both: {
+    a: {ok:true,  txt:"Right. If both ions cross, bulk electroneutral diffusion proceeds with much smaller sustained Vm."},
+    b: {ok:false, txt:"Passive diffusion here won’t produce sign-flipping oscillations."},
+    c: {ok:false, txt:"Cl− permeability can strongly shape Vm."},
+  },
+  double: {
+    a: {ok:false, txt:"E depends on the concentration ratio (log), not just valence."},
+    b: {ok:true,  txt:"Correct. Increasing the ratio increases |E| (log dependence)."},
+    c: {ok:false, txt:"Rate vs equilibrium: diffusion rate might change, but EK is set by the ratio."},
+  }
+};
+
+function wireQuiz(){
+  document.querySelectorAll(".choiceBtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const q = btn.dataset.q;
+      const a = btn.dataset.a;
+      const fbId = q === "stop" ? "fbStop" : q === "both" ? "fbBoth" : "fbDouble";
+      const fb = FEEDBACK[q][a];
+      const elFb = el(fbId);
+      elFb.textContent = fb.txt;
+      elFb.classList.toggle("good", fb.ok);
+      elFb.classList.toggle("bad", !fb.ok);
+    });
+  });
+}
+
+/* =========================================================
+   Wiring + init
+   ========================================================= */
+["tempC","Ko","Ki","Pk","Nao","Nai","Pna","Clo","Cli","Pcl","logMode"].forEach(id => el(id).addEventListener("input", updateRMP));
+el("btnDefaults").addEventListener("click", setDefaults);
+el("btnRandom").addEventListener("click", randomizeSmall);
+
+el("gOhm").addEventListener("input", drawIV);
+el("Eion").addEventListener("input", drawIV);
+["gMax","Erev","Vhalf","kSlope"].forEach(id => el(id).addEventListener("input", drawIV));
+
+el("gluOpen").addEventListener("input", ()=> el("gluOpenOut").textContent = Number(el("gluOpen").value).toFixed(2));
+el("gluStart").addEventListener("click", gluStart);
+el("gluPause").addEventListener("click", gluPause);
+el("gluReset").addEventListener("click", gluReset);
+["gluL","gluR"].forEach(id => el(id).addEventListener("input", gluReset));
+
+el("kOpen").addEventListener("input", ()=> el("kOpenOut").textContent = Number(el("kOpen").value).toFixed(2));
+el("kclStart").addEventListener("click", kclStart);
+el("kclPause").addEventListener("click", kclPause);
+el("kclReset").addEventListener("click", kclReset);
+["kclL","kclR","kclTemp"].forEach(id => el(id).addEventListener("input", kclReset));
+
+window.addEventListener("resize", ()=>{
+  updateRMP();
+  drawIV();
+  drawChamber(el("gluCanvasL"), gluL);
+  drawChamber(el("gluCanvasR"), gluR);
+  drawKcl();
+});
+
+wireQuiz();
+setDefaults();
+setIVMode("ohm");
+gluInit();
+kclInit();
+</script>
+</body>
+</html>
